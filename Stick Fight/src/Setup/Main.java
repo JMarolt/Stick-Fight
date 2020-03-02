@@ -9,19 +9,27 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
+import Map.Map;
+import Map.Terrain;
+
+
 public class Main implements ActionListener, KeyListener, MouseListener, MouseMotionListener{
 
+	//important variables
 	private JFrame f;
 	private Panel p;
 	private Timer timer;
 	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	//other variables
+	public static Map map;
 	
 	public Main() {
-		
+		map = new Map(new ArrayList<Terrain>());
 	}
 	
 	public void makeFrame() {
@@ -124,8 +132,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		p.repaint();
 	}
 	
 	
