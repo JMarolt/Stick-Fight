@@ -8,8 +8,7 @@ public class Map {
 
 	public Map(ArrayList<Terrain> terrains) {
 		makeTerrains();
-		addTerrainsToList();
-		terrains = randomizeOrder();
+		//terrains = randomizeOrder();
 	}
 	
 	public void run() {
@@ -18,10 +17,6 @@ public class Map {
 	
 	public void makeTerrains() {
 		//Terrain map1 = new Terrain("map1", 1, "src/MapFiles/map1.txt", "cool purple sky")
-	}
-	
-	public void addTerrainsToList() {
-		
 	}
 	
 	public ArrayList<Terrain> randomizeOrder(){

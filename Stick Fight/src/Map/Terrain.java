@@ -1,6 +1,7 @@
 package Map;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -33,6 +34,12 @@ public class Terrain {
 		this.fileScale = fileScale;
 		createTerrain();
 	}
+	
+	public Terrain(File file, int fileScale) {
+		this.file = file;
+		this.fileScale = fileScale;
+		createTerrain();
+	}
 
 	public void createTerrain() {
 		try {
@@ -54,7 +61,7 @@ public class Terrain {
 			System.out.println("File Not Found...");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("ah shit");
+			System.out.println("File is not compatible or method is broken");
 			e.printStackTrace();
 		}
 	}
@@ -81,6 +88,13 @@ public class Terrain {
 	public Point randoimizeSpawn() {
 		int random = (int) (Math.random()*spawnpoints.size());
 		return spawnpoints.get(random);
+	}
+	
+	public void drawTestTerrain(Graphics g) {
+		g.setColor(Color.black);
+		for(int i = 0; i < obstacles.size(); i++) {
+			g.fillRect(obstacles.get(i).getX(), obstacles.get(i).getY(), obstacles.get(i).getWidth(), obstacles.get(i).getHeight());
+		}
 	}
 	
 	public String getName() {

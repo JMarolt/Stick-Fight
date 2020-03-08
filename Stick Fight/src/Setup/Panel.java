@@ -16,6 +16,8 @@ public class Panel extends JPanel{
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.white);
 		g.fillRect(0, 0, Main.screenSize.width, Main.screenSize.height);
+		Main.terrainTester.drawTestTerrain(g);
+		Main.player.render(g);
 	}
 	
 }

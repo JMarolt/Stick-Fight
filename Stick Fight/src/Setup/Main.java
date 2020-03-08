@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -16,6 +17,7 @@ import javax.swing.Timer;
 
 import Map.Map;
 import Map.Terrain;
+import Player.Player;
 
 
 public class Main implements ActionListener, KeyListener, MouseListener, MouseMotionListener{
@@ -27,6 +29,10 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	//other variables
 	public static Map map;
+	public static Player player = new Player(100,100,30,100,100,12,2);
+	public static File file = new File("src/MapFiles/map1.txt");
+	public static Terrain terrainTester = new Terrain(file, 40);
+	boolean[] keys = new boolean[256];
 	
 	public Main() {
 		map = new Map(new ArrayList<Terrain>());
@@ -39,6 +45,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 		f.setFocusable(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setPreferredSize(screenSize);
+		f.addKeyListener(this);
 		makePanel();
 		addToPanel();
 		addToFrame();
@@ -51,7 +58,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 	}
 	
 	public void addToPanel() {
-
+		
 	}
 	
 	public void makePanel() {
@@ -69,71 +76,74 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 		main.makeFrame();
 		main.start();
 	}
+	
+	public void update() {
+		if(keys[32]) {
+			player.jump();
+		}
+		if(keys[65]) {
+			player.moveLeft();
+		}
+		if(keys[68]) {
+			player.moveRight();
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		p.repaint();
+		player.run();
+		update();
+	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		    
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		keys[e.getKeyCode()] = true;
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		keys[e.getKeyCode()] = false;
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		p.repaint();
-	}
-	
 	
 }
