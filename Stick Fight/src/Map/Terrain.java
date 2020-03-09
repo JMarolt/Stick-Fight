@@ -78,6 +78,10 @@ public class Terrain {
 		}
 	}
 	
+	public void combineRectangles() {
+		//how?
+	}
+	
 	public ArrayList<Point> setSpawns() {
 		for(int i = 0; i < obstacles.size(); i++) {
 			spawnpoints.add(new Point(obstacles.get(i).getX(), obstacles.get(i).getY()));
