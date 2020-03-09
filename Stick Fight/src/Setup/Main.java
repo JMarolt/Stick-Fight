@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import Map.Map;
+import Map.Point;
 import Map.Terrain;
 import Player.Player;
 
@@ -29,7 +30,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	//other variables
 	public static Map map;
-	public static Player player = new Player(100,100,30,100,100,12,2);
+	public static Player player = new Player(new Point(200,200),30,100,100,12,2);
 	public static File file = new File("src/MapFiles/map1.txt");
 	public static Terrain terrainTester = new Terrain(file, 40);
 	boolean[] keys = new boolean[256];

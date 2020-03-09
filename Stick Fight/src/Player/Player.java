@@ -8,23 +8,22 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import Map.Point;
 import Setup.Main;
 
 public class Player {
 
-	//gravity is 2. add gravity to vy. add vy to point.getY()
-	private int x, y;
+	private Point p;
 	private int width, height;
 	private int health, speed, gravity;
-	
+
 	private int dy = 0;
 	private Image playerImg;
 	private String playerImgURL = "default stick figure.png";
 	private boolean canJump = true;
-	
-	public Player(int x, int y, int width, int height, int health, int speed, int gravity) {
-		this.x = x;
-		this.y = y;
+
+	public Player(Point p, int width, int height, int health, int speed, int gravity) {
+		this.p = p;
 		this.width = width;
 		this.height = height;
 		this.health = health;
@@ -32,70 +31,87 @@ public class Player {
 		this.gravity = gravity;
 		setPlayerImage();
 	}
-	
+
 	public void run() {
 		canJump = false;
 		dy += gravity;
-		y += dy;
-		for(int i = 0; i < Main.terrainTester.getObstacles().size(); i++) {
-			if(collision().intersects(Main.terrainTester.getObstacles().get(i).collision()) && dy > 0){
-				dy = 0;
-				y = Main.terrainTester.getObstacles().get(i).getY() - height;
-				canJump = true;
+		p.setY(p.getY() + dy);
+		for (int i = 0; i < Main.terrainTester.getObstacles().size(); i++) {
+			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision())) {
+				if (dy > 0) {
+					p.setY(Main.terrainTester.getObstacles().get(i).getY() - height);
+					dy = 0;
+					canJump = true;
+				}
+				if (dy < 0) {
+					dy = 0;
+					p.setY(Main.terrainTester.getObstacles().get(i).getY()
+							+ Main.terrainTester.getObstacles().get(i).getHeight());
+				}
 			}
-			if(collision().intersects(Main.terrainTester.getObstacles().get(i).collision()) && dy < 0){
-				dy = 0;
-				y = Main.terrainTester.getObstacles().get(i).getY() + Main.terrainTester.getObstacles().get(i).getHeight();
+			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision())
+					&& (p.getY() > Main.terrainTester.getObstacles().get(i).getY()
+							&& p.getY() < Main.terrainTester.getObstacles().get(i).getY()
+									+ Main.terrainTester.getObstacles().get(i).getHeight())) {
+				if (p.getX() + width > Main.terrainTester.getObstacles().get(i).getX()) {
+					p.setX(Main.terrainTester.getObstacles().get(i).getX()
+							+ Main.terrainTester.getObstacles().get(i).getWidth());
+				}
+				if (p.getX() < Main.terrainTester.getObstacles().get(i).getX()) {
+					p.setX(Main.terrainTester.getObstacles().get(i).getX() - width);
+				}
 			}
 		}
+		if (p.getY() > Main.screenSize.height || (p.getX() < 0) || (p.getX() > Main.screenSize.width - width)) {
+			die();
+		}
 	}
-	
+
 	public void jump() {
-		if(canJump) {
+		if (canJump) {
 			dy = -35;
 		}
 	}
-	
+
+	public void die() {
+		// set it to spawn point of terrain later
+		p.setX(200);
+		p.setY(200);
+		dy = 0;
+	}
+
 	public void moveRight() {
-		x += speed;
+		p.setX(p.getX() + speed);
 	}
-	
+
 	public void moveLeft() {
-		x -= speed;
+		p.setX(p.getX() - speed);
 	}
-	
+
 	public Rectangle collision() {
-		return new Rectangle(getX(), getY(), getWidth(), getHeight());
+		return new Rectangle(getP().getX(), getP().getY(), getWidth(), getHeight());
 	}
-	
+
 	public Image setPlayerImage() {
 		try {
 			playerImg = ImageIO.read(this.getClass().getResourceAsStream(playerImgURL));
-		}catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return playerImg;
 	}
-	
+
 	public void render(Graphics g) {
-		Graphics2D g2d = (Graphics2D)g;
-		g2d.drawImage(playerImg, x, y, null);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawImage(playerImg, p.getX(), p.getY(), null);
 	}
 
-	public int getX() {
-		return x;
+	public Point getP() {
+		return p;
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
+	public void setP(Point p) {
+		this.p = p;
 	}
 
 	public int getWidth() {
@@ -137,7 +153,4 @@ public class Player {
 	public void setGravity(int gravity) {
 		this.gravity = gravity;
 	}
-	
-	
-	
 }
