@@ -18,6 +18,7 @@ public class Panel extends JPanel{
 		g.fillRect(0, 0, Main.screenSize.width, Main.screenSize.height);
 		Main.terrainTester.drawTestTerrain(g);
 		Main.player.render(g);
+		Main.gun.draw(g);
 	}
 	
 }

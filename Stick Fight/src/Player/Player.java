@@ -21,9 +21,9 @@ public class Player {
 	private Image playerImg;
 	private String playerImgURL = "default stick figure.png";
 	private boolean canJump = true;
-	private boolean canMoveLeft = true;
-	private boolean canMoveRight = true;
-
+	private boolean isHoldingWeapon = false;
+	Point gunPoint;
+	
 	public Player(Point p, int width, int height, int health, int speed, int gravity) {
 		this.p = p;
 		this.width = width;
@@ -31,6 +31,7 @@ public class Player {
 		this.health = health;
 		this.speed = speed;
 		this.gravity = gravity;
+		gunPoint = new Point(p.getX() - 13, p.getY() + 40);
 		setPlayerImage();
 	}
 
@@ -84,31 +85,41 @@ public class Player {
 				if (p.getX() > Main.terrainTester.getObstacles().get(i).getX()) {
 					p.setX(Main.terrainTester.getObstacles().get(i).getX()
 							+ Main.terrainTester.getObstacles().get(i).getWidth());
-					canMoveRight = false;
-					moveRight();
 				}
 				if (p.getX() < Main.terrainTester.getObstacles().get(i).getX()) {
 					p.setX(Main.terrainTester.getObstacles().get(i).getX() - width);
-					canMoveLeft = false;
-					moveLeft();
 				}
-			}else {
-				canMoveLeft = true;
-				canMoveRight = true;
 			}
 		}
 	}
 
-	public void moveRight() {
-		if(canMoveRight) {
-			p.setX(p.getX() + speed);
+	public void pickUpWeapon() {
+		if(collision().intersects(Main.gun.collision())) {
+			Main.gun.setP(gunPoint);
 		}
+		isHoldingWeapon = true;
+	}
+	
+	public void dropWeapon() {
+		if(isHoldingWeapon) {
+			
+		}
+	}
+	
+	public void shoot() {
+		
+	}
+	
+	public void drop() {
+		
+	}
+	
+	public void moveRight() {
+		p.setX(p.getX() + speed);
 	}
 
 	public void moveLeft() {
-		if(canMoveLeft) {
-			p.setX(p.getX() - speed);
-		}
+		p.setX(p.getX() - speed);
 	}
 
 	public Rectangle collision() {
