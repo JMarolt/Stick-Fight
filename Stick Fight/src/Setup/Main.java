@@ -28,11 +28,13 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 	private Panel p;
 	private Timer timer;
 	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	public static double widthRatio = screenSize.getWidth()/1920;
+	public static double heightRatio = screenSize.getHeight()/1080;
 	//other variables
 	public static Map map;
-	public static Player player = new Player(new Point(200,200),30,100,100,12,2);
+	public static Player player = new Player(new Point(200,200),20,100,100,12,2);
 	public static File file = new File("src/MapFiles/map1.txt");
-	public static Terrain terrainTester = new Terrain(file, 40);
+	public static Terrain terrainTester = new Terrain(file, 40, 40, 5);
 	boolean[] keys = new boolean[256];
 	
 	public Main() {
@@ -76,6 +78,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 		Main main = new Main();
 		main.makeFrame();
 		main.start();
+		
 	}
 	
 	public void update() {

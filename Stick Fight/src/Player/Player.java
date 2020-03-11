@@ -21,6 +21,8 @@ public class Player {
 	private Image playerImg;
 	private String playerImgURL = "default stick figure.png";
 	private boolean canJump = true;
+	private boolean canMoveLeft = true;
+	private boolean canMoveRight = true;
 
 	public Player(Point p, int width, int height, int health, int speed, int gravity) {
 		this.p = p;
@@ -36,32 +38,8 @@ public class Player {
 		canJump = false;
 		dy += gravity;
 		p.setY(p.getY() + dy);
-		for (int i = 0; i < Main.terrainTester.getObstacles().size(); i++) {
-			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision())) {
-				if (dy > 0) {
-					p.setY(Main.terrainTester.getObstacles().get(i).getY() - height);
-					dy = 0;
-					canJump = true;
-				}
-				if (dy < 0) {
-					dy = 0;
-					p.setY(Main.terrainTester.getObstacles().get(i).getY()
-							+ Main.terrainTester.getObstacles().get(i).getHeight());
-				}
-			}
-			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision())
-					&& (p.getY() > Main.terrainTester.getObstacles().get(i).getY()
-							&& p.getY() < Main.terrainTester.getObstacles().get(i).getY()
-									+ Main.terrainTester.getObstacles().get(i).getHeight())) {
-				if (p.getX() + width > Main.terrainTester.getObstacles().get(i).getX()) {
-					p.setX(Main.terrainTester.getObstacles().get(i).getX()
-							+ Main.terrainTester.getObstacles().get(i).getWidth());
-				}
-				if (p.getX() < Main.terrainTester.getObstacles().get(i).getX()) {
-					p.setX(Main.terrainTester.getObstacles().get(i).getX() - width);
-				}
-			}
-		}
+		checkVerticalCollision();
+		checkHorizontalCollision();
 		if (p.getY() > Main.screenSize.height || (p.getX() < 0) || (p.getX() > Main.screenSize.width - width)) {
 			die();
 		}
@@ -80,12 +58,57 @@ public class Player {
 		dy = 0;
 	}
 
+	public void checkVerticalCollision() {
+		for (int i = 0; i < Main.terrainTester.getObstacles().size(); i++) {
+			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision()) && (p.getY() + width < Main.terrainTester.getObstacles().get(i).getY() || p.getY() >  Main.terrainTester.getObstacles().get(i).getY())) {
+				if (dy > 0 && p.getY() + width < Main.terrainTester.getObstacles().get(i).getY()) {
+					p.setY(Main.terrainTester.getObstacles().get(i).getY() - height);
+					dy = 0;
+					canJump = true;
+				}
+				if (dy < 0 && p.getY() > Main.terrainTester.getObstacles().get(i).getY()) {
+					dy = 0;
+					p.setY(Main.terrainTester.getObstacles().get(i).getY()
+							+ Main.terrainTester.getObstacles().get(i).getHeight());
+				}
+			}
+		}
+	}
+
+	public void checkHorizontalCollision() {
+		for (int i = 0; i < Main.terrainTester.getObstacles().size(); i++) {
+			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision())
+					&& (p.getY() > Main.terrainTester.getObstacles().get(i).getY()
+							&& p.getY() < Main.terrainTester.getObstacles().get(i).getY()
+									+ Main.terrainTester.getObstacles().get(i).getHeight())) {
+				if (p.getX() > Main.terrainTester.getObstacles().get(i).getX()) {
+					p.setX(Main.terrainTester.getObstacles().get(i).getX()
+							+ Main.terrainTester.getObstacles().get(i).getWidth());
+					canMoveRight = false;
+					moveRight();
+				}
+				if (p.getX() < Main.terrainTester.getObstacles().get(i).getX()) {
+					p.setX(Main.terrainTester.getObstacles().get(i).getX() - width);
+					canMoveLeft = false;
+					moveLeft();
+				}
+			}else {
+				canMoveLeft = true;
+				canMoveRight = true;
+			}
+		}
+	}
+
 	public void moveRight() {
-		p.setX(p.getX() + speed);
+		if(canMoveRight) {
+			p.setX(p.getX() + speed);
+		}
 	}
 
 	public void moveLeft() {
-		p.setX(p.getX() - speed);
+		if(canMoveLeft) {
+			p.setX(p.getX() - speed);
+		}
 	}
 
 	public Rectangle collision() {
