@@ -1,77 +1,60 @@
 package Player;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import Map.Point;
 import Setup.Main;
-import Weapon.Gun;
-import Weapon.Melee;
 
-public class Player {
+public class Bot {
 
+	private int ID;
 	private Point p;
 	private int width, height;
 	private int health, speed, gravity;
-
+	
 	private int dy = 0;
-	private Image playerImg;
-	private String playerImgURL = "default stick figure.png";
 	private boolean canJump = true;
-	private Gun currentGun = null;
-	private Melee currentMelee = null;
-
-	public Player(Point p, int width, int height, int health, int speed, int gravity) {
+	
+	Image img;
+	String imageURL = "default stick figure.png";
+	
+	public Bot(int ID, Point p, int width, int height, int health, int speed, int gravity) {
+		this.ID = ID;
 		this.p = p;
 		this.width = width;
 		this.height = height;
 		this.health = health;
 		this.speed = speed;
 		this.gravity = gravity;
-		setPlayerImage();
+		setImage();
 	}
-
+	
 	public void run() {
 		canJump = false;
+		if(ID == 1) {
+			chooseTarget(Main.player, Main.bot2, Main.bot3);
+		}
+		if(ID == 2) {
+			chooseTarget(Main.player, Main.bot1, Main.bot3);
+		}
+		if(ID == 3) {
+			chooseTarget(Main.player, Main.bot1, Main.bot2);
+		}
 		dy += gravity;
 		p.setY(p.getY() + dy);
 		checkVerticalCollision();
 		checkHorizontalCollision();
-		if (p.getY() > Main.screenSize.height || (p.getX() < 0) || (p.getX() > Main.screenSize.width - width)) {
-			die();
-		}
-	}
-
-	public void attack() {
-
 	}
 	
-	public void pickUpWeapon() {
-		if(currentGun == null && currentMelee == null) {
-			//identify weapon picked up
-			Main.gun.setP(new Point(p.getX() - 13, p.getY() + 38));
-		}
+	public Rectangle collision() {
+		return new Rectangle(getP().getX(), getP().getY(), getWidth(), getHeight());
 	}
-
-	public void jump() {
-		if (canJump) {
-			dy = -35;
-		}
-	}
-
-	public void die() {
-		// set it to spawn point of terrain later
-		p.setX(200);
-		p.setY(200);
-		dy = 0;
-	}
-
+	
 	public void checkVerticalCollision() {
 		for (int i = 0; i < Main.terrainTester.getObstacles().size(); i++) {
 			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision())
@@ -90,7 +73,7 @@ public class Player {
 			}
 		}
 	}
-
+	
 	public void checkHorizontalCollision() {
 		for (int i = 0; i < Main.terrainTester.getObstacles().size(); i++) {
 			if (collision().intersects(Main.terrainTester.getObstacles().get(i).collision())
@@ -108,45 +91,72 @@ public class Player {
 		}
 	}
 	
-	public void checkVerticalEntityCollision() {
-		if(collision().intersects(Main.bot1.collision())) {
-			
+	public void chooseTarget(Player p, Bot a, Bot b) {
+		if(distanceBetweenPlayer(p) < distanceBetweenBot(a) && distanceBetweenPlayer(p) < distanceBetweenBot(b)) {
+			targetPlayer(p);
+		}else if(distanceBetweenBot(a) < distanceBetweenPlayer(p) && distanceBetweenBot(a) < distanceBetweenBot(b)) {
+			targetBot(a);
+		}else if(distanceBetweenBot(b) < distanceBetweenPlayer(p) && distanceBetweenBot(b) < distanceBetweenBot(a)){
+			targetBot(b);
 		}
 	}
 	
-	public void checkHorizontalEntityCollision() {
-		if(collision().intersects(Main.bot1.collision())) {
-			
+	public void targetPlayer(Player a) {
+		if(p.getX() < a.getP().getX()) {
+			moveRight();
+		}
+		if(p.getX() > a.getP().getX()) {
+			moveLeft();
 		}
 	}
-
+	
+	public void attack() {
+		
+	}
+	
+	public void targetBot(Bot a) {
+		if(p.getX() < a.getP().getX()) {
+			moveRight();
+		}
+		if(p.getX() > a.getP().getX()) {
+			moveLeft();
+		}
+	}
+	
+	public void jump() {
+		if(canJump) {
+			dy = -35;
+		}
+	}
+	
 	public void moveRight() {
 		p.setX(p.getX() + speed);
 	}
-
+	
 	public void moveLeft() {
 		p.setX(p.getX() - speed);
 	}
-
-	public Rectangle collision() {
-		return new Rectangle(getP().getX(), getP().getY(), getWidth(), getHeight());
+	
+	public int distanceBetweenPlayer(Player a) {
+		return (int)Math.sqrt((p.getX() - a.getP().getX())^2 + (p.getY() - a.getP().getY()));
 	}
-
-	public Image setPlayerImage() {
+	
+	public int distanceBetweenBot(Bot b) {
+		return (int)Math.sqrt((p.getX() - b.getP().getX())^2 + (p.getY() - b.getP().getY()));
+	}
+	
+	public Image setImage() {
 		try {
-			playerImg = ImageIO.read(this.getClass().getResourceAsStream(playerImgURL));
-		} catch (IOException e) {
+			img = ImageIO.read(this.getClass().getResourceAsStream(imageURL));
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		return playerImg;
+		return img;
 	}
-
-	public void render(Graphics g) {
-		g.setColor(Color.white);
-		g.fillPolygon(new int[] { p.getX() + (width / 4), p.getX() + (width / 2), p.getX() + ((width * 3) / 4) },
-				new int[] { p.getY() - 10, p.getY() - 5, p.getY() - 10 }, 3);
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(playerImg, p.getX(), p.getY(), null);
+	
+	public void draw(Graphics g) {
+		Graphics2D g2d = (Graphics2D)g;
+		g2d.drawImage(img, p.getX(), p.getY(), null);
 	}
 
 	public Point getP() {
@@ -196,4 +206,5 @@ public class Player {
 	public void setGravity(int gravity) {
 		this.gravity = gravity;
 	}
+	
 }

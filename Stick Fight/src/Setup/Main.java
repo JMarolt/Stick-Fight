@@ -18,7 +18,10 @@ import javax.swing.Timer;
 import Map.Map;
 import Map.Point;
 import Map.Terrain;
+import Player.Bot;
 import Player.Player;
+import Weapon.Bullet;
+import Weapon.Gun;
 
 
 public class Main implements ActionListener, KeyListener, MouseListener, MouseMotionListener{
@@ -31,11 +34,20 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 	public static double widthRatio = screenSize.getWidth()/1920;
 	public static double heightRatio = screenSize.getHeight()/1080;
 	//other variables
+	//everything is hardcoded numbers cuz bored asf
+	//needs to be an array list of melee weapons and guns that are spawned
+	//bots spawn points will be updated later
 	public static Map map;
 	public static Player player = new Player(new Point(200,200),20,100,100,12,2);
+	public static Bot bot1 = new Bot(1, new Point(500,200),20,100,100,12,2);
+	public static Bot bot2 = new Bot(2, new Point(800,200),20,100,100,12,2);
+	public static Bot bot3 = new Bot(3, new Point(1100,200),20,100,100,12,2);
 	public static File file = new File("src/MapFiles/map1.txt");
 	public static Terrain terrainTester = new Terrain(file, 40, 40, 5);
+	public static Gun gun = new Gun(new Point(200,200), 66, 33, 35, 20, 0);
+	public static ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	boolean[] keys = new boolean[256];
+	int i = 0;
 	
 	public Main() {
 		map = new Map(new ArrayList<Terrain>());
@@ -49,6 +61,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setPreferredSize(screenSize);
 		f.addKeyListener(this);
+		f.addMouseListener(this);
 		makePanel();
 		addToPanel();
 		addToFrame();
@@ -91,12 +104,34 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 		if(keys[68]) {
 			player.moveRight();
 		}
+		if(keys[69]) {
+			player.pickUpWeapon();
+		}
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		i++;
+		//System.out.println(i);
+		if(i % 60 == 0) {
+			//System.out.println("second");
+			i =0;
+		}
 		p.repaint();
 		player.run();
+		bot1.run();
+		bot2.run();
+		bot3.run();
+		gun.run();
+		for(int i = 0; i < Main.bullets.size(); i++) {
+			Main.bullets.get(i).run();
+			if(bullets.get(i).collidedWithObstacle()) {
+				bullets.remove(i);
+			}
+			if(bullets.get(i).collidedWithEntity()) {
+				bullets.remove(i);
+			}
+		}
 		update();
 	}
 
@@ -117,7 +152,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-	
+		gun.shoot();
 	}
 
 	@Override
