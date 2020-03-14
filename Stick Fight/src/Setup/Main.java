@@ -22,6 +22,7 @@ import Player.Bot;
 import Player.Player;
 import Weapon.Bullet;
 import Weapon.Gun;
+import Weapon.Weapon;
 
 
 public class Main implements ActionListener, KeyListener, MouseListener, MouseMotionListener{
@@ -44,8 +45,9 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 	public static Bot bot3 = new Bot(3, new Point(1100,200),20,100,100,12,2);
 	public static File file = new File("src/MapFiles/map1.txt");
 	public static Terrain terrainTester = new Terrain(file, 40, 40, 5);
-	public static Gun gun = new Gun(new Point(200,200), 66, 33, 35, 20, 0);
+	public static Gun gun = new Gun(new Point(200,200), 66, 33, 35, 20, 0, false);
 	public static ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	public static ArrayList<Weapon> weapons = new ArrayList<Weapon>();
 	boolean[] keys = new boolean[256];
 	int i = 0;
 	
@@ -115,7 +117,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 		//System.out.println(i);
 		if(i % 60 == 0) {
 			//System.out.println("second");
-			i =0;
+			i = 0;
 		}
 		p.repaint();
 		player.run();
@@ -131,6 +133,9 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 			if(bullets.get(i).collidedWithEntity()) {
 				bullets.remove(i);
 			}
+		}
+		if(gun.outOfAmmo()) {
+			
 		}
 		update();
 	}

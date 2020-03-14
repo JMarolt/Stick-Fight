@@ -1,8 +1,12 @@
 package Weapon;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import Map.Point;
 import Setup.Main;
@@ -12,12 +16,15 @@ public class Bullet {
 	private Point p;
 	private int width, height;
 	private int speed;
+	private Image img;
+	private String imgURL = "bullet.png";
 	
 	public Bullet(Point p, int width, int height, int speed) {
 		this.p = p;
 		this.width = width;
 		this.height = height;
 		this.speed = speed;
+		setImage();
 	}
 	
 	public void run() {
@@ -43,12 +50,21 @@ public class Bullet {
 	}
 	
 	public Rectangle collision() {
-		return new Rectangle(getP().getX(), getP().getY(), getWidth(), getHeight());
+		return new Rectangle(p.getX(), p.getY(), getWidth(), getHeight());
+	}
+	
+	public Image setImage() {
+		try {
+			img = ImageIO.read(this.getClass().getResourceAsStream(imgURL));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return img;
 	}
 
 	public void draw(Graphics g) {
-		g.setColor(Color.orange);
-		g.fillOval(p.getX(), p.getY(), width, height);
+		Graphics2D g2d = (Graphics2D)g;
+		g2d.drawImage(img, p.getX(), p.getY(), null);
 	}
 	
 	public Point getP() {

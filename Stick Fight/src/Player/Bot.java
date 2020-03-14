@@ -138,11 +138,11 @@ public class Bot {
 	}
 	
 	public int distanceBetweenPlayer(Player a) {
-		return (int)Math.sqrt((p.getX() - a.getP().getX())^2 + (p.getY() - a.getP().getY()));
+		return (int)Math.sqrt((p.getX() - a.getP().getX())^2 + (p.getY() - a.getP().getY())^2);
 	}
 	
 	public int distanceBetweenBot(Bot b) {
-		return (int)Math.sqrt((p.getX() - b.getP().getX())^2 + (p.getY() - b.getP().getY()));
+		return (int)Math.sqrt((p.getX() - b.getP().getX())^2 + (p.getY() - b.getP().getY())^2);
 	}
 	
 	public Image setImage() {

@@ -24,8 +24,9 @@ public class Player {
 	private Image playerImg;
 	private String playerImgURL = "default stick figure.png";
 	private boolean canJump = true;
-	private Gun currentGun = null;
-	private Melee currentMelee = null;
+	public static Gun currentGun = null;
+	public static Melee currentMelee = null;
+	private Point gunPoint;
 
 	public Player(Point p, int width, int height, int health, int speed, int gravity) {
 		this.p = p;
@@ -35,6 +36,7 @@ public class Player {
 		this.speed = speed;
 		this.gravity = gravity;
 		setPlayerImage();
+		gunPoint = new Point(p.getX() - 13, p.getY() + 38);
 	}
 
 	public void run() {
@@ -43,6 +45,7 @@ public class Player {
 		p.setY(p.getY() + dy);
 		checkVerticalCollision();
 		checkHorizontalCollision();
+		checkHorizontalEntityCollision();
 		if (p.getY() > Main.screenSize.height || (p.getX() < 0) || (p.getX() > Main.screenSize.width - width)) {
 			die();
 		}
@@ -53,9 +56,11 @@ public class Player {
 	}
 	
 	public void pickUpWeapon() {
-		if(currentGun == null && currentMelee == null) {
+		if((currentGun == null && currentMelee == null) && collision().intersects(Main.gun.collision())) {
 			//identify weapon picked up
-			Main.gun.setP(new Point(p.getX() - 13, p.getY() + 38));
+			Main.gun.setPickedUp(true);
+			currentGun = Main.gun;
+			Main.gun.setP(gunPoint);
 		}
 	}
 
@@ -115,17 +120,15 @@ public class Player {
 	}
 	
 	public void checkHorizontalEntityCollision() {
-		if(collision().intersects(Main.bot1.collision())) {
-			
+		if(collision().intersects(Main.bot1.collision()) && p.getY() - 100 < Main.bot1.getP().getY()) {
+			p.setX(p.getX() - width);
 		}
-	}
-
-	public void moveRight() {
-		p.setX(p.getX() + speed);
-	}
-
-	public void moveLeft() {
-		p.setX(p.getX() - speed);
+		if(collision().intersects(Main.bot2.collision()) && p.getY() - 100 < Main.bot2.getP().getY()) {
+			p.setX(p.getX() - width);
+		}
+		if(collision().intersects(Main.bot3.collision()) && p.getY() - 100 < Main.bot3.getP().getY()) {
+			p.setX(p.getX() - width);
+		}
 	}
 
 	public Rectangle collision() {
@@ -139,6 +142,14 @@ public class Player {
 			e.printStackTrace();
 		}
 		return playerImg;
+	}
+	
+	public void moveLeft() {
+		p.setX(p.getX() - speed);
+	}
+	
+	public void moveRight() {
+		p.setX(p.getX() + speed);
 	}
 
 	public void render(Graphics g) {
@@ -196,4 +207,5 @@ public class Player {
 	public void setGravity(int gravity) {
 		this.gravity = gravity;
 	}
+	
 }
