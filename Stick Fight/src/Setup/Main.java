@@ -68,7 +68,7 @@ public class Main implements ActionListener, KeyListener, MouseListener, MouseMo
 		addToPanel();
 		addToFrame();
 		f.pack();
-		f.setVisible(true);;
+		f.setVisible(true);
 	}
 	
 	public void addToFrame() {
